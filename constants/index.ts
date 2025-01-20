@@ -7,10 +7,10 @@ export const NavbarItems = [
     id: 'product-price',
     title: 'تسجيل اسعار المنتجات',
   },
-  // {
-  //   id: 'projects',
-  //   title: 'المشروعات',
-  // },
+  {
+    id: 'projects',
+    title: 'المشروعات',
+  },
   // {
   //   id: 'farms',
   //   title: 'مزارع',

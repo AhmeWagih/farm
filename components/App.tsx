@@ -2,13 +2,6 @@
 
 import { useState } from 'react';
 import Navbar from '@/components/shared/Navbar';
-import AgriculturalManufacturingForm from './Forms/AgriculturalManufacturingForm';
-import FarmsForm from './Forms/FarmsForm';
-import AgriculturalDeveloperForm from './Forms/AgriculturalDeveloperForm';
-import IntermediateStationsForm from './Forms/IntermediateStationsForm';
-import StorageForm from './Forms/StorageForm';
-import ManufacturingForm from './Forms/ManufacturingForm';
-import LaboratoriesForm from './Forms/LaboratoriesForm';
 import ProjectForm from './Forms/ProjectForm';
 import LeftSidebar from './shared/Sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -18,13 +11,7 @@ import ProductTypesForm from './Forms/ProductTypesForm';
 const ProductPrice = () => <ProductPriceForm />;
 const ProductTypes = () => <ProductTypesForm />;
 const Project = () => <ProjectForm />;
-const Farms = () => <FarmsForm />;
-const AgriculturalDeveloper = () => <AgriculturalDeveloperForm />;
-const IntermediateStations = () => <IntermediateStationsForm />;
-const Storage = () => <StorageForm />;
-const AgriculturalManufacturing = () => <AgriculturalManufacturingForm />;
-const Manufacturing = () => <ManufacturingForm />;
-const Laboratories = () => <LaboratoriesForm />;
+
 
 const App = () => {
   const [activeItem, setActiveItem] = useState('product-type');
@@ -37,20 +24,6 @@ const App = () => {
         return <ProductPrice />;
       case 'projects':
         return <Project />;
-      case 'farms':
-        return <Farms />;
-      case 'agricultural-developer':
-        return <AgriculturalDeveloper />;
-      case 'intermediate-stations':
-        return <IntermediateStations />;
-      case 'storage':
-        return <Storage />;
-      case 'agricultural-manufacturing':
-        return <AgriculturalManufacturing />;
-      case 'manufacturing':
-        return <Manufacturing />;
-      case 'laboratories':
-        return <Laboratories />;
       default:
         return null;
     }

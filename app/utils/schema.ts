@@ -14,7 +14,6 @@ export const productTypesSchema = z.object({
   image_Path: z.any()
 });
 
-
 export const formSchema = z.object({
   project: z.string(),
   projectNameAr: z.string(),

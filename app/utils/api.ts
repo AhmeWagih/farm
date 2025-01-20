@@ -59,11 +59,11 @@ export const GetAllGovernorate = async () => {
 
 export const addProductType = async (productData: ProductTypeFormData) => {
   try {
-    const formattedData = {
-      ...productData,
-    };
+    const formattedData = { ...productData };
+    console.log('Product Data Sent:', formattedData);
+
     const response = await axios.post(
-      'https://localhost:7287/api/Products/addProduct',
+      'https://127.0.0.1:7287/api/Products/addProduct',
       formattedData,
       {
         headers: {
@@ -71,14 +71,15 @@ export const addProductType = async (productData: ProductTypeFormData) => {
         },
       }
     );
-    console.log('product successfully added:', response.data);
+
+    console.log('Product successfully added:', response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('API Response Error:', error.response?.data);
       throw new Error(error.response?.data?.message || 'Failed to add product');
     }
-    console.error('Error adding project:', error);
+    console.error('Unexpected Error:', error);
     throw error;
   }
 };
