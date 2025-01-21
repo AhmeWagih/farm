@@ -1,5 +1,5 @@
 'use client';
-
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,14 +43,37 @@ const ProductTypesForm = () => {
 
   async function onSubmit(values: z.infer<typeof productTypesSchema>) {
     try {
-      await addProductType(values);
-      alert('تمت إضافة المشروع بنجاح!');
+      console.log('Form values before processing:', values);
+  
+      // Ensure required fields are present
+      if (!values.product_Name_Ar || !values.product_Name_En || !values.image_Path) {
+        alert('Please fill in all required fields');
+        return;
+      }
+  
+      // Prepare formData
+      const formData = {
+        ...values,
+      };
+  
+      console.log('Sending to API:', formData);
+  
+      // Call API
+      const response = await addProductType(formData);
+      console.log('API Response:', response);
+  
+      // Success alert
+      alert('تمت إضافة المنتج بنجاح!');
       form.reset();
     } catch (error) {
-      console.error('Error:', error);
-      alert('حدث خطأ. يرجى المحاولة مرة أخرى.');
+      console.error('Detailed Error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Response Error:', error.response?.data);
+      }
+      alert('حدث خطأ. يرجى المحاولة مرة أخرى. ' + (error instanceof Error ? error.message : ''));
     }
   }
+  
   
 
   useEffect(() => {
