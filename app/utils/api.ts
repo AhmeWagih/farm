@@ -1,5 +1,7 @@
+
+
 import axios from 'axios';
-import {  ProjectFormData } from '@/types';
+import { ProjectFormData } from '@/types';
 
 export const addProject = async (projectData: ProjectFormData) => {
   try {
