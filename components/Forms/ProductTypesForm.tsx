@@ -43,27 +43,50 @@ const ProductTypesForm = () => {
 
   async function onSubmit(values: z.infer<typeof productTypesSchema>) {
     try {
-      console.log('Form values before processing:', values);
+      console.log("Form values before processing:", values);
+  
       if (!values.product_Name_Ar || !values.product_Name_En || !values.image_Path) {
-        alert('Please fill in all required fields');
+        alert("Please fill in all required fields");
         return;
       }
-      const formData = {
-        ...values,
-      };
-      console.log('Sending to API:', formData);
-      const response = await addProductType(formData);
-      console.log('API Response:', response);
-      alert('تمت إضافة المنتج بنجاح!');
+  
+      const formData = new FormData();
+      formData.append("product_Name_Ar", values.product_Name_Ar);
+      formData.append("product_Name_En", values.product_Name_En);
+      formData.append("type", values.type.toString());
+      formData.append("register_Number", values.register_Number.toString());
+      formData.append("productTypeName", values.productTypeName);
+      formData.append("reg_Site_Name", values.reg_Site_Name);
+      formData.append("scientific_Class", values.scientific_Class);
+      formData.append("producer_Name", values.producer_Name);
+      formData.append("specification_Info", values.specification_Info);
+  
+      if (values.image_Path instanceof File) {
+        formData.append("image_Path", values.image_Path);
+      } else {
+        console.error("Invalid file format for image_Path");
+        alert("Please upload a valid image file");
+        return;
+      }
+  
+      console.log("Sending to API:", formData);
+  
+      const response = await addProductType(formData); // Ensure `addProductType` supports `FormData`
+      console.log("API Response:", response);
+      alert("تمت إضافة المنتج بنجاح!");
       form.reset();
     } catch (error) {
-      console.error('Detailed Error:', error);
+      console.error("Detailed Error:", error);
       if (axios.isAxiosError(error)) {
-        console.error('Axios Response Error:', error.response?.data);
+        console.error("Axios Response Error:", error.response?.data);
       }
-      alert('حدث خطأ. يرجى المحاولة مرة أخرى. ' + (error instanceof Error ? error.message : ''));
+      alert(
+        "حدث خطأ. يرجى المحاولة مرة أخرى. " +
+          (error instanceof Error ? error.message : "")
+      );
     }
   }
+  
   
   useEffect(() => {
     const fetchTypes = async () => {

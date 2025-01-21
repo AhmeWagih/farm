@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ProductTypeFormData, ProjectFormData } from '@/types';
+import {  ProjectFormData } from '@/types';
 
 export const addProject = async (projectData: ProjectFormData) => {
   try {
@@ -52,18 +52,14 @@ export const GetAllGovernorate = async () => {
   }
 };
 
-export const addProductType = async (productData: ProductTypeFormData) => {
+export const addProductType = async (productData: FormData) => {
   try {
-    const formattedData = {
-      ...productData,
-    };
-
     const response = await axios.post(
       'https://localhost:7287/api/Products/addProduct',
-      formattedData,
+      productData,
       {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       }
     );
