@@ -35,7 +35,7 @@ export interface ProductTypeFormData {
   id: number;
   product_Name_Ar: string;
   product_Name_En: string;
-  type: string;
+  type: number;
   register_Number: number;
   productTypeName: string;
   reg_Site_Name: string;

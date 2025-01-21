@@ -30,7 +30,7 @@ const ProductTypesForm = () => {
       id: 0,
       product_Name_Ar: '',
       product_Name_En: '',
-      type: '',
+      type: 0,
       register_Number: 0,
       productTypeName: '',
       reg_Site_Name: '',
@@ -44,25 +44,16 @@ const ProductTypesForm = () => {
   async function onSubmit(values: z.infer<typeof productTypesSchema>) {
     try {
       console.log('Form values before processing:', values);
-  
-      // Ensure required fields are present
       if (!values.product_Name_Ar || !values.product_Name_En || !values.image_Path) {
         alert('Please fill in all required fields');
         return;
       }
-  
-      // Prepare formData
       const formData = {
         ...values,
       };
-  
       console.log('Sending to API:', formData);
-  
-      // Call API
       const response = await addProductType(formData);
       console.log('API Response:', response);
-  
-      // Success alert
       alert('تمت إضافة المنتج بنجاح!');
       form.reset();
     } catch (error) {
@@ -74,8 +65,6 @@ const ProductTypesForm = () => {
     }
   }
   
-  
-
   useEffect(() => {
     const fetchTypes = async () => {
       try {
@@ -122,7 +111,7 @@ const ProductTypesForm = () => {
                 {/* Types */}
                 <FormField
                   control={form.control}
-                  name="type"
+                  name="productTypeName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>نوع المنتج</FormLabel>
