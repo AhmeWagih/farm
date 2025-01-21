@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ProductTypeFormData, ProjectFormData } from '@/types';
 
 export const addProject = async (projectData: ProjectFormData) => {
@@ -59,27 +58,30 @@ export const GetAllGovernorate = async () => {
 
 export const addProductType = async (productData: ProductTypeFormData) => {
   try {
-    const formattedData = { ...productData };
-    console.log('Product Data Sent:', formattedData);
+    const formattedData = {
+      ...productData,
+      
+    };
 
-    const response = await axios.post(
-      'https://127.0.0.1:7287/api/Products/addProduct',
-      formattedData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await fetch('https://localhost:7287/api/Products/addProduct', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formattedData),
+    });
 
-    console.log('Product successfully added:', response.data);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('API Response Error:', error.response?.data);
-      throw new Error(error.response?.data?.message || 'Failed to add product');
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API Response Error:', errorData);
+      throw new Error(errorData.message || 'Failed to add product');
     }
-    console.error('Unexpected Error:', error);
+
+    const data = await response.json();
+    console.log('product successfully added:', data);
+    return data;
+  } catch (error) {
+    console.error('Error adding product:', error);
     throw error;
   }
 };
