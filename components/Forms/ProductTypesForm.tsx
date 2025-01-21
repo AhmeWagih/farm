@@ -15,24 +15,28 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { productTypesSchema } from '@/app/utils/schema';
-import { addProductType } from '@/app/utils/api';
+import { addProductType, GetAllTypes } from '@/app/utils/api';
 import { Textarea } from '../ui/textarea';
+import { useEffect, useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const ProductTypesForm = () => {
+  const [types, setTypes] = useState([]);
+
   const form = useForm<z.infer<typeof productTypesSchema>>({
     resolver: zodResolver(productTypesSchema),
     defaultValues: {
       id: 0,
       product_Name_Ar: '',
       product_Name_En: '',
-      type: 0,
+      type: '',
       register_Number: 0,
       productTypeName: '',
       reg_Site_Name: '',
       scientific_Class: '',
       producer_Name: '',
       specification_Info: '',
-      image_Path: null,
+      image_Path: '',
     },
   });
 
@@ -47,6 +51,19 @@ const ProductTypesForm = () => {
     }
   }
   
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      try {
+        const data = await GetAllTypes();
+        setTypes(data);
+      } catch (error) {
+        console.error('Error fetching types:', error);
+      }
+    };
+    fetchTypes();
+  }, []);
+
 
   return (
     <Card className="w-full mx-auto">
@@ -74,6 +91,46 @@ const ProductTypesForm = () => {
                           {...field}
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Types */}
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>نوع المنتج</FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="اختر نوع المنتج" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {types.length === 0 ? (
+                            <SelectItem value="loading" disabled>
+                              جاري التحميل...
+                            </SelectItem>
+                          ) : (
+                            types.map((type: { id: number; type: string }) => (
+                              <SelectItem
+                                className="text-right"
+                                key={type.id}
+                                value={type.type}
+                              >
+                                {type.type}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -230,7 +287,7 @@ const ProductTypesForm = () => {
                               <div className="rounded-lg shadow-lg overflow-hidden">
                                 <img
                                   id="imagePreview"
-                                  src={URL.createObjectURL(field.value)}
+                                  src={typeof field.value === 'object' ? URL.createObjectURL(field.value) : field.value}
                                   className="w-full h-56 object-contain"
                                   alt="Preview"
                                 />

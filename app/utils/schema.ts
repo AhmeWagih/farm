@@ -4,7 +4,7 @@ export const productTypesSchema = z.object({
   id: z.number(),
   product_Name_Ar: z.string(),
   product_Name_En: z.string(), 
-  type: z.number(),
+  type: z.string(),
   register_Number: z.number(),
   productTypeName: z.string(),
   reg_Site_Name: z.string(),

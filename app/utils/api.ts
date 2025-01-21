@@ -62,7 +62,6 @@ export const addProductType = async (productData: ProductTypeFormData) => {
       ...productData,
       
     };
-
     const response = await fetch('https://localhost:7287/api/Products/addProduct', {
       method: 'POST',
       headers: {
@@ -82,6 +81,29 @@ export const addProductType = async (productData: ProductTypeFormData) => {
     return data;
   } catch (error) {
     console.error('Error adding product:', error);
+    throw error;
+  }
+};
+
+export const GetAllTypes = async () => {
+  try {
+    const response = await fetch('https://localhost:7287/api/ProductType/getTypes', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API Response Error:', errorData);
+      throw new Error(errorData.message || 'Failed to fetch types');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching types:', error);
     throw error;
   }
 };

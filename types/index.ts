@@ -31,12 +31,12 @@ export interface ProductTypeFormData {
   id: number;
   product_Name_Ar: string;
   product_Name_En: string;
-  type: number;
+  type: string;
   register_Number: number;
   productTypeName: string;
   reg_Site_Name: string;
   scientific_Class: string;
   producer_Name: string;
   specification_Info: string;
-  image_Path: File | null;
+  image_Path: File | string | null;
 }
