@@ -135,11 +135,13 @@ const ProductTypesForm = () => {
                             field.onChange(selectedType.typeName);
                           }
                         }}
-                        value={field.value?.toString() || undefined}
+                        value={field.value || undefined}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="اختر نوع المنتج" />
+                            <SelectValue>
+                              {field.value ? field.value : "اختر نوع المنتج"}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
