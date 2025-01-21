@@ -6,11 +6,12 @@ export const productTypesSchema = z.object({
   product_Name_En: z.string(),
   type: z.string(),
   register_Number: z.number(),
+  productTypeName: z.string(),
   reg_Site_Name: z.string(),
   scientific_Class: z.string(),
   producer_Name: z.string(),
   specification_Info: z.string(),
-  ImageFile: z.union([z.instanceof(File), z.string(), z.null()])
+  image_Path: z.union([z.instanceof(File), z.string(), z.null()])
 });
 
 export const formSchema = z.object({

@@ -36,17 +36,65 @@ const ProductTypesForm = () => {
       id: 0,
       product_Name_Ar: '',
       product_Name_En: '',
-      type: '', // This will store the ID of the selected type
+      type: '',
       register_Number: 0,
       reg_Site_Name: '',
       scientific_Class: '',
       producer_Name: '',
       specification_Info: '',
-      ImageFile: null, // Initialize as null for file upload
+      image_Path: '',
     },
   });
 
-  // Fetch product types on component mount
+  async function onSubmit(values: z.infer<typeof productTypesSchema>) {
+    try {
+      console.log('Form values before processing:', values);
+
+      if (
+        !values.product_Name_Ar ||
+        !values.product_Name_En ||
+        !values.image_Path
+      ) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('product_Name_Ar', values.product_Name_Ar);
+      formData.append('product_Name_En', values.product_Name_En);
+      formData.append('register_Number', values.register_Number.toString());
+      formData.append('productTypeName', values.productTypeName);
+      formData.append('reg_Site_Name', values.reg_Site_Name);
+      formData.append('scientific_Class', values.scientific_Class);
+      formData.append('producer_Name', values.producer_Name);
+      formData.append('specification_Info', values.specification_Info);
+
+      if (values.image_Path instanceof File) {
+        formData.append('image_Path', values.image_Path);
+      } else {
+        console.error('Invalid file format for image_Path');
+        alert('Please upload a valid image file');
+        return;
+      }
+
+      console.log('Sending to API:', formData);
+
+      const response = await addProductType(formData); // Ensure `addProductType` supports `FormData`
+      console.log('API Response:', response);
+      alert('تمت إضافة المنتج بنجاح!');
+      form.reset();
+    } catch (error) {
+      console.error('Detailed Error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Response Error:', error.response?.data);
+      }
+      alert(
+        'حدث خطأ. يرجى المحاولة مرة أخرى. ' +
+          (error instanceof Error ? error.message : '')
+      );
+    }
+  }
+
   useEffect(() => {
     const fetchTypes = async () => {
       try {
@@ -59,60 +107,6 @@ const ProductTypesForm = () => {
     fetchTypes();
   }, []);
 
-  // Handle form submission
-  const onSubmit = async (values: z.infer<typeof productTypesSchema>) => {
-    try {
-      console.log('Form values before processing:', values);
-
-      // Validate required fields
-      if (
-        !values.product_Name_Ar ||
-        !values.product_Name_En ||
-        !values.ImageFile
-      ) {
-        alert('Please fill in all required fields');
-        return;
-      }
-
-      // Prepare FormData for API submission
-      const formData = new FormData();
-      formData.append('product_Name_Ar', values.product_Name_Ar);
-      formData.append('product_Name_En', values.product_Name_En);
-      formData.append('type', values.type); // Send the ID of the selected type
-      formData.append('register_Number', values.register_Number.toString());
-      formData.append('reg_Site_Name', values.reg_Site_Name);
-      formData.append('scientific_Class', values.scientific_Class);
-      formData.append('producer_Name', values.producer_Name);
-      formData.append('specification_Info', values.specification_Info);
-
-      // Validate and append image file
-      if (values.ImageFile instanceof File) {
-        formData.append('ImageFile', values.ImageFile);
-      } else {
-        console.error('Invalid file format for ImageFile');
-        alert('Please upload a valid image file');
-        return;
-      }
-
-      console.log('Sending to API:', formData);
-
-      // Submit form data
-      const response = await addProductType(formData);
-      console.log('API Response:', response);
-      alert('تمت إضافة المنتج بنجاح!');
-      form.reset(); // Reset the form after successful submission
-    } catch (error) {
-      console.error('Detailed Error:', error);
-      if (axios.isAxiosError(error)) {
-        console.error('Axios Response Error:', error.response?.data);
-      }
-      alert(
-        'حدث خطأ. يرجى المحاولة مرة أخرى. ' +
-          (error instanceof Error ? error.message : '')
-      );
-    }
-  };
-
   return (
     <Card className="w-full mx-auto">
       <CardHeader>
@@ -124,7 +118,6 @@ const ProductTypesForm = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
-              {/* Left Column */}
               <div className="space-y-4">
                 {/* Arabic Product Name */}
                 <FormField
@@ -132,7 +125,7 @@ const ProductTypesForm = () => {
                   name="product_Name_Ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>اسم المنتج باللغة العربية</FormLabel>
+                      <FormLabel>اسم المنتج باللغة العربية </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل اسم المنتج"
@@ -144,8 +137,7 @@ const ProductTypesForm = () => {
                     </FormItem>
                   )}
                 />
-
-                {/* Product Type Dropdown */}
+                {/* Types */}
                 <FormField
                   control={form.control}
                   name="type"
@@ -154,15 +146,19 @@ const ProductTypesForm = () => {
                       <FormLabel>نوع المنتج</FormLabel>
                       <Select
                         onValueChange={(value) => {
-                          field.onChange(value); // Store the ID of the selected type
+                          const selectedType = types.find(
+                            (ty) => ty.id.toString() === value
+                          );
+                          if (selectedType) {
+                            field.onChange(selectedType.typeName);
+                          }
                         }}
-                        value={field.value || ''} // Use the ID as the value
+                        value={field.value || undefined}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="اختر نوع المنتج">
-                              {types.find((ty) => ty.id.toString() === field.value)?.typeName ||
-                                'اختر نوع المنتج'}
+                            <SelectValue>
+                              {field.value ? field.value : 'اختر نوع المنتج'}
                             </SelectValue>
                           </SelectTrigger>
                         </FormControl>
@@ -176,7 +172,7 @@ const ProductTypesForm = () => {
                               <SelectItem
                                 className="text-right"
                                 key={ty.id}
-                                value={ty.id.toString()} // Use the ID as the value
+                                value={ty.id.toString()}
                               >
                                 {ty.typeName}
                               </SelectItem>
@@ -188,8 +184,7 @@ const ProductTypesForm = () => {
                     </FormItem>
                   )}
                 />
-
-                {/* Registration Number */}
+                {/* Number of Registration */}
                 <FormField
                   control={form.control}
                   name="register_Number"
@@ -198,7 +193,7 @@ const ProductTypesForm = () => {
                       <FormLabel>رقم التسجيل العلمي</FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
+                          type="text"
                           placeholder="أدخل رقم التسجيل العلمي"
                           className="text-right"
                           {...field}
@@ -211,8 +206,7 @@ const ProductTypesForm = () => {
                     </FormItem>
                   )}
                 />
-
-                {/* Registration Site */}
+                {/* Place of Registration */}
                 <FormField
                   control={form.control}
                   name="reg_Site_Name"
@@ -221,26 +215,27 @@ const ProductTypesForm = () => {
                       <FormLabel>جهة التسجيل</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="أدخل جهة التسجيل"
+                          type="text"
+                          placeholder="أدخل  جهة التسجيل"
                           className="text-right"
                           {...field}
+                          onChange={(e) => field.onChange(e.target.value)}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/* Scientific Classification */}
+                {/* Scientific Class */}
                 <FormField
                   control={form.control}
                   name="scientific_Class"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>التصنيف العلمي</FormLabel>
+                      <FormLabel> التصنيف العلمي </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="أدخل التصنيف العلمي"
+                          placeholder="أدخل  التصنيف العلمي"
                           className="text-right"
                           {...field}
                         />
@@ -249,7 +244,6 @@ const ProductTypesForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Producer Name */}
                 <FormField
                   control={form.control}
@@ -269,8 +263,6 @@ const ProductTypesForm = () => {
                   )}
                 />
               </div>
-
-              {/* Right Column */}
               <div className="space-y-4">
                 {/* English Product Name */}
                 <FormField
@@ -278,10 +270,10 @@ const ProductTypesForm = () => {
                   name="product_Name_En"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>اسم المنتج باللغة الإنجليزية</FormLabel>
+                      <FormLabel>اسم المنتج باللغة الانجليزية </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter Product Name"
+                          placeholder=" Enter Product Name"
                           className="text-right"
                           {...field}
                         />
@@ -290,14 +282,13 @@ const ProductTypesForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Specification Info */}
                 <FormField
                   control={form.control}
                   name="specification_Info"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>المواصفات العلمية</FormLabel>
+                      <FormLabel> المواصفات العلمية </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="أدخل المواصفات العلمية"
@@ -309,11 +300,10 @@ const ProductTypesForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Product Image Upload */}
                 <FormField
                   control={form.control}
-                  name="ImageFile"
+                  name="image_Path"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>صورة المنتج</FormLabel>
@@ -327,7 +317,7 @@ const ProductTypesForm = () => {
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                  field.onChange(file); // Update the form state with the file
+                                  field.onChange(file);
                                   const reader = new FileReader();
                                   reader.onload = (e) => {
                                     const preview = document.getElementById(
@@ -358,7 +348,7 @@ const ProductTypesForm = () => {
                                   type="button"
                                   className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 w-8 h-7 flex items-center justify-center hover:bg-red-600"
                                   onClick={() => {
-                                    field.onChange(null); // Clear the file from the form state
+                                    field.onChange(null);
                                     const preview = document.getElementById(
                                       'imagePreview'
                                     ) as HTMLImageElement;
@@ -380,8 +370,6 @@ const ProductTypesForm = () => {
                 />
               </div>
             </div>
-
-            {/* Form Actions */}
             <div className="flex justify-end gap-4">
               <Button
                 type="button"

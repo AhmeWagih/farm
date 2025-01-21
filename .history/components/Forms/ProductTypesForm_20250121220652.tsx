@@ -87,9 +87,9 @@ const ProductTypesForm = () => {
 
       // Validate and append image file
       if (values.ImageFile instanceof File) {
-        formData.append('ImageFile', values.ImageFile);
+        formData.append('image_Path', values.ImageFile);
       } else {
-        console.error('Invalid file format for ImageFile');
+        console.error('Invalid file format for image_Path');
         alert('Please upload a valid image file');
         return;
       }
@@ -313,7 +313,7 @@ const ProductTypesForm = () => {
                 {/* Product Image Upload */}
                 <FormField
                   control={form.control}
-                  name="ImageFile"
+                  name="image_Path"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>صورة المنتج</FormLabel>

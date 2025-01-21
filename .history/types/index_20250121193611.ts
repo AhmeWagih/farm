@@ -38,8 +38,10 @@ export interface ProductTypeFormData {
   product_Name_En: string;
   type: string;
   register_Number: number;
+  productTypeName: string;
   reg_Site_Name: string;
   scientific_Class: string;
   producer_Name: string;
   specification_Info: string;
+  image_Path: File | string | null;
 }

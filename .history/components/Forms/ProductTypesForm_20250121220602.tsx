@@ -42,7 +42,7 @@ const ProductTypesForm = () => {
       scientific_Class: '',
       producer_Name: '',
       specification_Info: '',
-      ImageFile: null, // Initialize as null for file upload
+      imageFile: null, // Initialize as null for file upload
     },
   });
 
@@ -68,7 +68,7 @@ const ProductTypesForm = () => {
       if (
         !values.product_Name_Ar ||
         !values.product_Name_En ||
-        !values.ImageFile
+        !values.image_Path
       ) {
         alert('Please fill in all required fields');
         return;
@@ -86,10 +86,10 @@ const ProductTypesForm = () => {
       formData.append('specification_Info', values.specification_Info);
 
       // Validate and append image file
-      if (values.ImageFile instanceof File) {
-        formData.append('ImageFile', values.ImageFile);
+      if (values.image_Path instanceof File) {
+        formData.append('image_Path', values.image_Path);
       } else {
-        console.error('Invalid file format for ImageFile');
+        console.error('Invalid file format for image_Path');
         alert('Please upload a valid image file');
         return;
       }
@@ -313,7 +313,7 @@ const ProductTypesForm = () => {
                 {/* Product Image Upload */}
                 <FormField
                   control={form.control}
-                  name="ImageFile"
+                  name="image_Path"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>صورة المنتج</FormLabel>

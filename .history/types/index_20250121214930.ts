@@ -42,4 +42,5 @@ export interface ProductTypeFormData {
   scientific_Class: string;
   producer_Name: string;
   specification_Info: string;
+  image_Path: File | string | null;
 }

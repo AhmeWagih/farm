@@ -26,9 +26,12 @@ import {
   SelectValue,
 } from '../ui/select';
 import { ProductType } from '@/types';
+import { useRouter } from 'next/navigation'; // For navigation after submission
 
 const ProductTypesForm = () => {
   const [types, setTypes] = useState<ProductType[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state
+  const router = useRouter(); // Initialize useRouter for navigation
 
   const form = useForm<z.infer<typeof productTypesSchema>>({
     resolver: zodResolver(productTypesSchema),
@@ -36,13 +39,13 @@ const ProductTypesForm = () => {
       id: 0,
       product_Name_Ar: '',
       product_Name_En: '',
-      type: '', // This will store the ID of the selected type
+      type: '',
       register_Number: 0,
       reg_Site_Name: '',
       scientific_Class: '',
       producer_Name: '',
       specification_Info: '',
-      ImageFile: null, // Initialize as null for file upload
+      image_Path: '',
     },
   });
 
@@ -54,6 +57,7 @@ const ProductTypesForm = () => {
         setTypes(data);
       } catch (error) {
         console.error('Error fetching types:', error);
+        toast.error('Failed to load product types. Please try again.');
       }
     };
     fetchTypes();
@@ -61,16 +65,17 @@ const ProductTypesForm = () => {
 
   // Handle form submission
   const onSubmit = async (values: z.infer<typeof productTypesSchema>) => {
-    try {
-      console.log('Form values before processing:', values);
+    if (isSubmitting) return; // Prevent multiple submissions
+    setIsSubmitting(true);
 
+    try {
       // Validate required fields
       if (
         !values.product_Name_Ar ||
         !values.product_Name_En ||
-        !values.ImageFile
+        !values.image_Path
       ) {
-        alert('Please fill in all required fields');
+        toast.error('Please fill in all required fields.');
         return;
       }
 
@@ -78,38 +83,41 @@ const ProductTypesForm = () => {
       const formData = new FormData();
       formData.append('product_Name_Ar', values.product_Name_Ar);
       formData.append('product_Name_En', values.product_Name_En);
-      formData.append('type', values.type); // Send the ID of the selected type
       formData.append('register_Number', values.register_Number.toString());
+      formData.append('type', values.type);
       formData.append('reg_Site_Name', values.reg_Site_Name);
       formData.append('scientific_Class', values.scientific_Class);
       formData.append('producer_Name', values.producer_Name);
       formData.append('specification_Info', values.specification_Info);
 
       // Validate and append image file
-      if (values.ImageFile instanceof File) {
-        formData.append('ImageFile', values.ImageFile);
+      if (values.image_Path instanceof File) {
+        formData.append('image_Path', values.image_Path);
       } else {
-        console.error('Invalid file format for ImageFile');
-        alert('Please upload a valid image file');
+        toast.error('Please upload a valid image file.');
         return;
       }
-
-      console.log('Sending to API:', formData);
 
       // Submit form data
       const response = await addProductType(formData);
       console.log('API Response:', response);
-      alert('تمت إضافة المنتج بنجاح!');
-      form.reset(); // Reset the form after successful submission
+
+      // Show success message and reset form
+      toast.success('تمت إضافة المنتج بنجاح!');
+      form.reset();
+      router.push('/products'); // Redirect to products page after success
     } catch (error) {
       console.error('Detailed Error:', error);
       if (axios.isAxiosError(error)) {
         console.error('Axios Response Error:', error.response?.data);
+        toast.error(
+          `حدث خطأ. يرجى المحاولة مرة أخرى. ${error.response?.data?.message || ''}`
+        );
+      } else {
+        toast.error('حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.');
       }
-      alert(
-        'حدث خطأ. يرجى المحاولة مرة أخرى. ' +
-          (error instanceof Error ? error.message : '')
-      );
+    } finally {
+      setIsSubmitting(false); // Reset submission state
     }
   };
 
@@ -154,16 +162,18 @@ const ProductTypesForm = () => {
                       <FormLabel>نوع المنتج</FormLabel>
                       <Select
                         onValueChange={(value) => {
-                          field.onChange(value); // Store the ID of the selected type
+                          const selectedType = types.find(
+                            (ty) => ty.id.toString() === value
+                          );
+                          if (selectedType) {
+                            field.onChange(selectedType.typeName);
+                          }
                         }}
-                        value={field.value || ''} // Use the ID as the value
+                        value={field.value || undefined}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="اختر نوع المنتج">
-                              {types.find((ty) => ty.id.toString() === field.value)?.typeName ||
-                                'اختر نوع المنتج'}
-                            </SelectValue>
+                            <SelectValue placeholder="اختر نوع المنتج" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -176,7 +186,7 @@ const ProductTypesForm = () => {
                               <SelectItem
                                 className="text-right"
                                 key={ty.id}
-                                value={ty.id.toString()} // Use the ID as the value
+                                value={ty.id.toString()}
                               >
                                 {ty.typeName}
                               </SelectItem>
@@ -313,7 +323,7 @@ const ProductTypesForm = () => {
                 {/* Product Image Upload */}
                 <FormField
                   control={form.control}
-                  name="ImageFile"
+                  name="image_Path"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>صورة المنتج</FormLabel>
@@ -327,7 +337,7 @@ const ProductTypesForm = () => {
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                  field.onChange(file); // Update the form state with the file
+                                  field.onChange(file);
                                   const reader = new FileReader();
                                   reader.onload = (e) => {
                                     const preview = document.getElementById(
@@ -358,7 +368,7 @@ const ProductTypesForm = () => {
                                   type="button"
                                   className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 w-8 h-7 flex items-center justify-center hover:bg-red-600"
                                   onClick={() => {
-                                    field.onChange(null); // Clear the file from the form state
+                                    field.onChange(null);
                                     const preview = document.getElementById(
                                       'imagePreview'
                                     ) as HTMLImageElement;
@@ -391,8 +401,8 @@ const ProductTypesForm = () => {
               >
                 حذف
               </Button>
-              <Button type="submit" className="w-32">
-                تسجيل
+              <Button type="submit" className="w-32" disabled={isSubmitting}>
+                {isSubmitting ? 'جاري التسجيل...' : 'تسجيل'}
               </Button>
             </div>
           </form>
