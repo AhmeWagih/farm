@@ -19,9 +19,10 @@ import { addProductType, GetAllTypes } from '@/app/utils/api';
 import { Textarea } from '../ui/textarea';
 import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { ProductType } from '@/types';
 
 const ProductTypesForm = () => {
-  const [types, setTypes] = useState([]);
+  const [types, setTypes] = useState<ProductType[]>([]);
 
   const form = useForm<z.infer<typeof productTypesSchema>>({
     resolver: zodResolver(productTypesSchema),
@@ -104,9 +105,14 @@ const ProductTypesForm = () => {
                       <FormLabel>نوع المنتج</FormLabel>
                       <Select
                         onValueChange={(value) => {
-                          field.onChange(value);
+                          const selectedType = types.find(
+                            (ty) => ty.id.toString() === value
+                          );
+                          if (selectedType) {
+                            field.onChange(selectedType.typeName);
+                          }
                         }}
-                        value={field.value?.toString()}
+                        value={field.value?.toString() || undefined}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -119,13 +125,13 @@ const ProductTypesForm = () => {
                               جاري التحميل...
                             </SelectItem>
                           ) : (
-                            types.map((type: { id: number; type: string }) => (
+                            types.map((ty) => (
                               <SelectItem
                                 className="text-right"
-                                key={type.id}
-                                value={type.type}
+                                key={ty.id}
+                                value={ty.id.toString()}
                               >
-                                {type.type}
+                                {ty.typeName}
                               </SelectItem>
                             ))
                           )}

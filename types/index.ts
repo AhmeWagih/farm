@@ -26,6 +26,10 @@ export interface Governorate {
   type: string;
   name_En: string;
 }
+export interface ProductType {
+  id: number;
+  typeName: string;
+}
 
 export interface ProductTypeFormData {
   id: number;

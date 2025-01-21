@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const productTypesSchema = z.object({
   id: z.number(),
   product_Name_Ar: z.string(),
-  product_Name_En: z.string(), 
+  product_Name_En: z.string(),
   type: z.string(),
   register_Number: z.number(),
   productTypeName: z.string(),
@@ -11,7 +11,7 @@ export const productTypesSchema = z.object({
   scientific_Class: z.string(),
   producer_Name: z.string(),
   specification_Info: z.string(),
-  image_Path: z.any()
+  image_Path: z.union([z.instanceof(File), z.string(), z.null()])
 });
 
 export const formSchema = z.object({
