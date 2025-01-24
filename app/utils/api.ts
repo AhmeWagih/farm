@@ -98,6 +98,26 @@ export const getAllProducts = async () => {
   }
 };
 
+export const searchProductsByName = async (searchTerm: string) => {
+  try {
+    const response = await axios.get(`https://localhost:7287/api/Products/search/${searchTerm}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    console.log('Products searched successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching products:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('API Response Error:', error.response?.data);
+      throw new Error(error.response?.data?.message || 'Failed to search products');
+    }
+    throw error;
+  }
+};
+
 export const GetAllTypes = async () => {
   try {
     const response = await fetch('https://localhost:7287/api/ProductType/getTypes', {

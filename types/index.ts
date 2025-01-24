@@ -43,3 +43,16 @@ export interface ProductTypeFormData {
   producer_Name: string;
   specification_Info: string;
 }
+
+export interface Product {
+  id: number;
+  product_Name_Ar: string;
+  product_Name_En: string;
+  register_Number: number;
+  reg_Site_Name: string;
+  productTypeName: string;
+  scientific_Class: string;
+  producer_Name: string;
+  specification_Info: string;
+  image_Path: string;
+}

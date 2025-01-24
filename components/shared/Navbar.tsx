@@ -13,7 +13,7 @@ import { ChevronDown } from 'lucide-react'
 
 const Navbar = ({ setActiveItem, activeItem }: INavbarProps) => {
   return (
-    <div className="bg-gray-100 py-4 px-4 sm:px-9">
+    <div className=" py-4 sm:px-9">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="font-semibold font-serif w-full max-w-[384px] flex justify-between items-start">

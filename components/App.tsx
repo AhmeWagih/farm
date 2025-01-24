@@ -9,17 +9,23 @@ import ProductPriceForm from './Forms/ProductPriceForm';
 import ProductTypesForm from './Forms/ProductTypesForm';
 import ProductsTypeTable from './Tables/ProductsTypeTable';
 
-{/* Render the forms */}
+{
+  /* Render the forms */
+}
 const ProductPrice = () => <ProductPriceForm />;
 const ProductTypes = () => <ProductTypesForm />;
 const Project = () => <ProjectForm />;
-{/* Render the tables */}
+{
+  /* Render the tables */
+}
 const ProductsTable = () => <ProductsTypeTable />;
 const ProductPriceTable = () => <div>Product Price Table</div>;
 const ProjectsTable = () => <div>Projects Table</div>;
 
 const App = () => {
-  {/* Render the forms */}
+  {
+    /* Render the forms */
+  }
   const [activeItem, setActiveItem] = useState('product-type');
   const renderForm = () => {
     switch (activeItem) {
@@ -49,21 +55,19 @@ const App = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-gray-100 flex flex-col w-full" dir="rtl">
+      <div className="min-h-screen flex flex-col w-full px-10 bg-slate-100" dir="rtl">
         <Navbar activeItem={activeItem} setActiveItem={setActiveItem} />
         <div className="flex flex-1 mx-3 ">
           {/* Main Content */}
-          <main className="flex-1 w-full p-4 md:p-6 !pt-0 bg-gray-100">
-            <div className="w-full mx-auto bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-100px)]">
+          <main className="flex-1 w-full py-4 md:p-6 !pt-0 ">
+            <div className="w-full bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-100px)]">
               {renderForm()}
-              <div className="mt-6">
-                {renderTable()}
-              </div>
             </div>
           </main>
           {/* Sidebar */}
           <LeftSidebar className="bg-white mx-auto w-64 rounded-lg shadow-md p-6 max-h-[calc(100vh-100px)]" />
         </div>
+        <div className="px-10 mb-10">{renderTable()}</div>
       </div>
     </SidebarProvider>
   );
