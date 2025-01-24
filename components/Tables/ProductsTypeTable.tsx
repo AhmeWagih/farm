@@ -81,7 +81,7 @@ const ProductsTypeTable = () => {
         <Table className="min-w-full">
           <TableHeader className="bg-white">
             <TableRow>
-              <TableHead className="w-30 text-right">الرقم التعريفي</TableHead>
+              {/* <TableHead className="w-30 text-right">الرقم التعريفي</TableHead> */}
               <TableHead className="min-w-40 text-right">اسم المنتج (بالعربية)</TableHead>
               <TableHead className="min-w-40 text-right">اسم المنتج (بالانجليزية)</TableHead>
               <TableHead className="min-w-40 text-right">نوع المنتج</TableHead>
@@ -103,7 +103,7 @@ const ProductsTypeTable = () => {
             ) : (
               products.map((product) => (
                 <TableRow key={product.id} className="hover:bg-gray-50">
-                  <TableCell className="text-right">{product.id}</TableCell>
+                  {/* <TableCell className="text-right">{product.id}</TableCell> */}
                   <TableCell className="text-right">{product.product_Name_Ar}</TableCell>
                   <TableCell className="text-right">{product.product_Name_En}</TableCell>
                   <TableCell className="text-right">{product.productTypeName}</TableCell>
