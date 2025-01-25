@@ -78,6 +78,29 @@ export const addProductType = async (productData: FormData) => {
   }
 };
 
+export const deleteProduct = async (id: number) => {
+  try {
+    const response = await axios.delete(
+      `https://localhost:7287/api/Products/deleteProduct/${id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('Product successfully deleted:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('API Response Error:', error.response?.data);
+      throw new Error(error.response?.data?.message || 'Failed to delete product');
+    }
+    throw error;
+  }
+};
+
 export const getAllProducts = async () => {
   try {
     const response = await axios.get('https://localhost:7287/api/Products/getProducts', {

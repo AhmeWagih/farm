@@ -8,10 +8,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getAllProducts, searchProductsByName } from '@/app/utils/api';
+import { getAllProducts, searchProductsByName, deleteProduct } from '@/app/utils/api';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Product } from '@/types';
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2 } from "lucide-react";
 
 const ProductsTypeTable = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -54,6 +56,17 @@ const ProductsTypeTable = () => {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (window.confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+      try {
+        await deleteProduct(id);
+        setProducts(products.filter(product => product.id !== id));
+      } catch (err) {
+        console.error('Error deleting product:', err);
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -91,12 +104,13 @@ const ProductsTypeTable = () => {
               <TableHead className="min-w-40 text-right">جهات الإنتاج</TableHead>
               <TableHead className="min-w-40 text-right">المواصفات العلمية</TableHead>
               <TableHead className="min-w-40 text-right">الصورة</TableHead>
+              <TableHead className="min-w-40 text-right">الإجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-10">
+                <TableCell colSpan={11} className="text-center py-10">
                   <div className="text-gray-500">لا توجد بيانات متاحة</div>
                 </TableCell>
               </TableRow>
@@ -127,6 +141,25 @@ const ProductsTypeTable = () => {
                         No Image
                       </div>
                     )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleDelete(product.id)}
+                        className="h-8 w-8 text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 text-blue-500 hover:text-blue-700"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
